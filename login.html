@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gerenciamento de Doadores</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parse/3.4.3/parse.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .container {
+            min-height: 100vh;
+        }
+
+        .container__caixa {
+            max-width: 400px;
+        }
+
+        input {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <section class="container">
+        <div class="container__caixa">
+            <h1 class="container__titulo">Login</h1>
+            <form id="loginForm" class="container__form">
+                <input type="text" id="username" placeholder="Usuário" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="rodape">
+        <p>App "Match do Bem", desenvolvido pela equipe Erivânia, Hemerson, Humberto e Isabel</p>
+    </footer>
+
+    <script>
+
+        Parse.initialize('winm9cbnUUSt37DOLHgvXRBdSbRLRyv4RXW7WvvD', 'jcrjxZKfxwXXqldjxT9SIG1tPUil7O0YzlUc70Dd');
+        Parse.serverURL = "https://parseapi.back4app.com/";
+
+
+        async function login(event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const user = await Parse.User.logIn(username, password);
+                alert("Login bem-sucedido!");
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                console.error('Erro ao fazer login', error);
+                alert("Erro ao fazer login. Verifique seu usuário e senha.");
+            }
+        }
+
+        document.getElementById("loginForm").addEventListener("submit", login);
+    </script>
+</body>
+</html>

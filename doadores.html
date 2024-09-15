@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Doadores</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;400;700&display=swap" rel="stylesheet">
+    <style>
+        .container {
+            min-height: 100vh;
+            background-image: url('img/doacao.webp');
+	        background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: var(--background-fill); 
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="login.html" class="header__login">Login</a>
+    </header>
+
+    <section class="container">
+        <div class="container__caixa">
+            <h1 class="container__titulo">Cadastro de Doadores</h1>
+            <form id="doadorForm" class="container__form">
+                <input type="hidden" id="doadorId" />
+
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" required>
+
+                <label for="cpfCnpj">CPF/CNPJ:</label>
+                <input type="text" id="cpfCnpj" required>
+
+                <label for="endereco">Endereço:</label>
+                <input type="text" id="endereco" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+
+                <label for="telefone">Telefone:</label>
+                <input type="text" id="telefone" required>
+
+                <button type="submit">Salvar</button>
+                <button type="button" onclick="resetForm()">Cancelar</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="rodape">
+        <p>App "Match do Bem", desenvolvido pela equipe Erivânia, Hemerson, Humberto e Isabel</p>
+    </footer>
+
+    <script src="https://npmcdn.com/parse/dist/parse.min.js"></script>
+    <script>
+
+        Parse.initialize('winm9cbnUUSt37DOLHgvXRBdSbRLRyv4RXW7WvvD', 'jcrjxZKfxwXXqldjxT9SIG1tPUil7O0YzlUc70Dd');
+        Parse.serverURL = "https://parseapi.back4app.com/";
+
+
+        function validarCpfCnpj(cpfCnpj) {
+            const cpfCnpjPattern = /^\d{11}$|^\d{14}$/;
+            return cpfCnpjPattern.test(cpfCnpj);
+        }
+
+
+        function validarEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
+
+        function validarTelefone(telefone) {
+            const telefonePattern = /^\(\d{2}\) \d{4,5}-\d{4}$/;
+            return telefonePattern.test(telefone);
+        }
+
+
+        async function criarDoador(event) {
+            event.preventDefault();
+
+            let nomeDoador = document.getElementById("nome").value;
+            let cpfCnpjDoador = document.getElementById("cpfCnpj").value;
+            let enderecoDoador = document.getElementById("endereco").value;
+            let emailDoador = document.getElementById("email").value;
+            let telefoneDoador = document.getElementById("telefone").value;
+
+
+            if (!validarCpfCnpj(cpfCnpjDoador)) {
+                alert("CPF/CNPJ inválido.");
+                return;
+            }
+
+            if (!validarEmail(emailDoador)) {
+                alert("E-mail inválido.");
+                return;
+            }
+
+            if (!validarTelefone(telefoneDoador)) {
+                alert("Telefone inválido. Use o formato (XX) XXXX-XXXX ou (XX) XXXXX-XXXX.");
+                return;
+            }
+
+            const Doador = Parse.Object.extend('Doador');
+            const myNewObject = new Doador();
+
+            myNewObject.set('nome', nomeDoador);
+            myNewObject.set('cpfCnpj', cpfCnpjDoador);
+            myNewObject.set('endereco', enderecoDoador);
+            myNewObject.set('email', emailDoador);
+            myNewObject.set('telefone', telefoneDoador);
+
+            try {
+                await myNewObject.save();
+                alert("Doador cadastrado com sucesso!");
+                resetForm();
+            } catch (error) {
+                console.error('Erro ao cadastrar Doador: ', error);
+                alert("Erro. Não foi possível salvar o doador.");
+            }
+        }
+
+
+        function resetForm() {
+            document.getElementById("doadorForm").reset();
+        }
+
+
+        document.getElementById("doadorForm").addEventListener("submit", criarDoador);
+    </script>
+</body>
+</html>
